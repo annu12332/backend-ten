@@ -33,7 +33,7 @@ async function run() {
       }
     });
 
-    // GET all or by category
+   
     app.get('/services', async (req, res) => {
       try {
        
@@ -47,7 +47,7 @@ async function run() {
       }
     });
 
-    // GET service by ID
+   
     app.get('/services/:id', async (req, res) => {
       const { id } = req.params;
       try {
@@ -58,7 +58,7 @@ async function run() {
       }
     });
 
-    // PUT service update
+    
     app.put('/services/:id', async (req, res) => {
       const { id } = req.params;
       const updatedData = req.body;
@@ -72,7 +72,7 @@ async function run() {
       }
     });
 
-    // GET user ads
+    /
     app.get('/myads', async (req, res) => {
       const { email, homePageLimit } = req.query;
       const limit = homePageLimit?6:0
@@ -84,7 +84,7 @@ async function run() {
       }
     });
 
-    // DELETE service
+   
     app.delete('/delete/:id', async (req, res) => {
       const { id } = req.params;
       try {
