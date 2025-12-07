@@ -19,8 +19,9 @@ async function run() {
     await client.connect();
     const database = client.db('petService');
     const petServices = database.collection('services');
+    const OrderCollections = database.collection('OrderCollections');
 
-    // POST
+    // POST service
     app.post('/services', async (req, res) => {
       try {
         const data = req.body;
@@ -35,16 +36,18 @@ async function run() {
     // GET all or by category
     app.get('/services', async (req, res) => {
       try {
-        const { category } = req.query;
+       
+         const { category, homePageLimit } = req.query;
+      const limit = homePageLimit?6:0
         const query = category ? { category } : {};
-        const result = await petServices.find(query).toArray();
+        const result = await petServices.find(query).limit(limit).toArray();
         res.send(result);
       } catch (err) {
         res.status(500).send({ error: 'Failed to fetch services' });
       }
     });
 
-    // GET by ID
+    // GET service by ID
     app.get('/services/:id', async (req, res) => {
       const { id } = req.params;
       try {
@@ -55,7 +58,7 @@ async function run() {
       }
     });
 
-    // PUT update
+    // PUT service update
     app.put('/services/:id', async (req, res) => {
       const { id } = req.params;
       const updatedData = req.body;
@@ -71,16 +74,17 @@ async function run() {
 
     // GET user ads
     app.get('/myads', async (req, res) => {
-      const { email } = req.query;
+      const { email, homePageLimit } = req.query;
+      const limit = homePageLimit?6:0
       try {
-        const result = await petServices.find({ email }).toArray();
+        const result = await petServices.find({ email }).limit(limit).toArray();
         res.send(result);
       } catch (err) {
         res.status(500).send({ error: 'Failed to fetch user ads' });
       }
     });
 
-    // DELETE
+    // DELETE service
     app.delete('/delete/:id', async (req, res) => {
       const { id } = req.params;
       try {
@@ -90,6 +94,29 @@ async function run() {
         res.status(500).send({ error: 'Failed to delete service' });
       }
     });
+
+   
+    app.post('/orders', async (req, res) => {
+      try {
+        const data = req.body;
+        data.createdAt = new Date();
+
+        const result = await OrderCollections.insertOne(data);
+
+        res.send({
+          success: true,
+          message: "Order placed successfully",
+          result
+        });
+      } catch (error) {
+        res.status(500).send({ success: false, error: "Failed to place order" });
+      }
+    });
+
+    app.get('/orders', async(req, res)=>{
+      const result = await OrderCollections.find().toArray();
+      res.status(200).send(result);
+    })
 
     console.log("Connected to MongoDB successfully!");
   } finally {}
